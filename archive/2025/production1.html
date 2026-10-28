@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deepavali Greetings - Simple</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    background: #000; /* Background color fallback */
+  }
+  /* Overlay */
+  .overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+  }
+
+  /* Container for the two lamps side by side */
+  .lamps-wrapper {
+    display: flex;
+    gap: 300px; /* space between lamps */
+    z-index: 3;
+  }
+
+  .lamp-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+  }
+
+  .lamp-img {
+    width: 100%;
+    filter: brightness(0.5);
+    transition: filter 0.3s ease;
+  }
+
+  .flame {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 110px;
+    background: radial-gradient(circle at 50% 20%, #fff6a9, #ffb300 50%, transparent 70%);
+    clip-path: polygon(50% 0%, 70% 25%, 80% 50%, 70% 75%, 50% 100%, 30% 75%, 20% 50%, 30% 25%);
+    opacity: 0;
+    filter: drop-shadow(0 0 15px #ffb300);
+    transition: opacity 0.3s ease;
+  }
+
+  .flame::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 50px;
+    background: radial-gradient(circle at 50% 30%, #fff7d4, #ffd966 60%, transparent 80%);
+    clip-path: polygon(50% 0%, 70% 25%, 80% 50%, 70% 75%, 50% 100%, 30% 75%, 20% 50%, 30% 25%);
+    opacity: 0.8;
+  }
+
+  @keyframes flicker {
+    0%   { transform: translateX(-50%) scale(1) rotate(-1deg); opacity: 0.85; filter: drop-shadow(0 0 10px #ffb300); }
+    25%  { transform: translateX(-50%) scale(1.05) rotate(1deg); opacity: 1; filter: drop-shadow(0 0 25px #ffd966); }
+    50%  { transform: translateX(-50%) scale(0.95) rotate(-2deg); opacity: 0.9; }
+    75%  { transform: translateX(-50%) scale(1.1) rotate(1deg); opacity: 1; }
+    100% { transform: translateX(-50%) scale(1) rotate(0deg); opacity: 0.85; }
+  }
+
+  .lamp-container.lit .flame {
+    opacity: 0.9;
+    animation: flicker 0.2s infinite alternate;
+  }
+
+  .lamp-container.lit .lamp-img {
+    filter: brightness(1.3) drop-shadow(0 0 25px #ffb300);
+  }
+  
+  /* Center container */
+  .container {
+    text-align: center;
+    padding: 20px 40px;
+  }
+
+  /* Main greeting text */
+  #greeting {
+    font-size: 2.2em;
+    font-weight: bold;
+    opacity: 0;
+    transform: scale(0.98);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+	 color: #ffcc66;
+  }
+
+  /* Language name */
+  #langMessage {
+    font-size: 1.1em;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    margin-top: 8px;
+    color: #ffcc66;
+  }
+
+  .show #greeting, 
+  .show #langMessage {
+    opacity: 1;
+    transform: scale(1);
+  }
+  #messageBox {
+  position: relative;
+  z-index: 4; /* Higher than .overlay (z-index: 0) and canvas (z-index: 1) */
+}
+
+  @keyframes flickerText {
+    0%, 100% { text-shadow: 0 0 20px #ffe57f, 0 0 40px #ff0; }
+    25% { text-shadow: 0 0 30px #fff176, 0 0 50px #ffcc33; }
+    50% { text-shadow: 0 0 25px #ff8c00, 0 0 45px #ff6b6b; }
+    75% { text-shadow: 0 0 35px #ffea00, 0 0 55px #fff; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1.1); }
+    50% { transform: scale(1.2); }
+  }
+
+  /* Canvas for fireworks */
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+ <div class="overlay"></div>
+
+  <!-- Canvas for fireworks -->
+  <canvas id="sky"></canvas>
+
+  <!-- Two lamps side by side -->
+  <div class="lamps-wrapper">
+    <div class="lamp-container" id="deepaLamp1">
+      <img src="deepa.png" alt="Deepa Lamp 1" class="lamp-img" />
+      <div class="flame"></div>
+    </div>
+
+    <div class="lamp-container" id="deepaLamp2">
+      <img src="deepa.png" alt="Deepa Lamp 2" class="lamp-img" />
+      <div class="flame"></div>
+    </div>
+  </div>
+
+  <!-- Greeting -->
+<div class="container" id="messageBox">
+  <h1 id="greeting">🎆 ದೀಪಾವಳಿ ಹಬ್ಬದ ಶುಭಾಶಯಗಳು 🎆</h1>
+  <h6 id="langMessage">Kannada</h6>
+</div>
+
+<script>
+const canvas = document.getElementById("sky");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+  const greeting = document.getElementById("greeting");
+  const langMessage = document.getElementById("langMessage");
+  const messageBox = document.getElementById("messageBox");
+
+  const texts = {
+   Assamese: "শুভ দীপায়ভালি",
+  Bengali: "শুভ দীপাবলি",
+  Bodo: "हामब्लायथि दिवालि",
+  Dogri: "देआली दियां शुभकामनां",
+  Gujarati: "હેપ્પી દિવાળી",
+  Hindi: "शुभ दीपावली",
+  Kannada: "ದೀಪಾವಳಿ ಹಬ್ಬದ ಶುಭಾಷಯಗಳು",
+  Kashmiri: "دیوالی مبارک",
+  Konkani: "दिवाळीच्या शुभेच्छा.",
+  Maithili: "शुभ दीपावली",
+  Malayalam: "സന്തോഷകരമായ ദീപാവലി",
+  Manipuri: "নুংঙাইরবা দিপাবলী ওইরসনু",
+  Marathi: "दीपावलीच्या हार्दिक शुभेच्छा",
+  Nepali: "शुभ दीपावली",
+  Odia: "ଶୁଭ ଦୀପାବଳି",
+  Punjabi: "ਸ਼ੁਭ ਦੀਪਾਵਲੀ",
+  Sanskrit: "सुखदं दीपावल्याः",
+  Santali: "ᱥᱟᱱᱟᱢ ᱠᱚᱜᱮ ᱫᱤᱣᱟᱞᱤ ᱨᱮᱭᱟᱜ ᱥᱩᱵᱷᱚ ᱠᱟᱢᱱᱟ",
+  Sindhi: "خوشيءَ ڀريو ديپاولی",
+  Tamil: "இனிய தீபாவளி வாழ்த்துகள்",
+  Telugu: "దీపావళి శుభాకాంక్షలు",
+  Urdu: "ہیپی دیوالی"
+  };
+
+  const languages = Object.keys(texts);
+  let index = 0;
+
+  function updateGreeting() {
+    const lang = languages[index];
+    const message = texts[lang];
+
+    //messageBox.classList.remove("show");
+
+    setTimeout(() => {
+      greeting.textContent = `🎇 ${message} 🎇`;
+      langMessage.textContent = lang;
+      //messageBox.classList.add("show");
+    }, 400);
+
+    index = (index + 1) % languages.length;
+  }
+
+  setInterval(updateGreeting, 2800);
+
+  
+  window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+// Sounds (replace with your own sound files or comment these if not available)
+//const launchSound = new Audio("launch.mp3");
+const explodeSound = new Audio("explosion.mp3");
+
+class Particle {
+  constructor(x, y, color, velocity, size, life) {
+    this.x = x; this.y = y;
+    this.color = color;
+    this.velocity = velocity;
+    this.size = size;
+    this.life = life;
+    this.alpha = 1;
+  }
+  update() {
+    this.x += this.velocity.x;
+    this.y += this.velocity.y;
+    // subtle gravity and air drag for blushing fall
+    this.velocity.y += 0.02;
+    this.velocity.x *= 0.995;
+    this.life -= 1;
+    this.alpha = Math.max(this.life / 120, 0);
+  }
+  draw(ctx) {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    // create radial gradient for soft glow (blush)
+    const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, Math.max(1, this.size * 6));
+    grad.addColorStop(0, this._rgba(this.color, 0.95));
+    grad.addColorStop(0.2, this._rgba(this.color, 0.8));
+    grad.addColorStop(0.5, this._rgba(this.color, 0.35));
+    grad.addColorStop(1, this._rgba(this.color, 0));
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * 2.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // bright core
+    ctx.beginPath();
+    ctx.fillStyle = this.color;
+    ctx.globalAlpha = Math.min(1, this.alpha * 1.2);
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  _rgba(hex, a) {
+    // convert hex color like #ff6b6b to rgba
+    let c = hex.replace('#','');
+    if (c.length === 3) c = c.split('').map(ch => ch+ch).join('');
+    const r = parseInt(c.substring(0,2),16);
+    const g = parseInt(c.substring(2,4),16);
+    const b = parseInt(c.substring(4,6),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+}
+
+class Ring {
+  constructor(x, y, color) {
+    this.x = x; this.y = y;
+    this.r = 10;
+    this.maxR = 120 + Math.random() * 60;
+    this.width = 6 + Math.random() * 4;
+    this.alpha = 0.9;
+    this.color = color;
+  }
+  update() {
+    this.r += 6 + Math.random() * 4;
+    this.alpha -= 0.02 + Math.random() * 0.01;
+  }
+  draw(ctx) {
+    if (this.alpha <= 0) return;
+    ctx.save();
+    ctx.globalAlpha = this.alpha * 0.9;
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = this.width;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+class Firework {
+  constructor(startX, startY, targetX, targetY) {
+    this.x = startX; this.y = startY;
+    this.targetX = targetX; this.targetY = targetY;
+    this.speed = 8 + Math.random() * 3;
+    this.angle = Math.atan2(targetY - startY, targetX - startX);
+    this.trail = [];
+    this.reached = false;
+    this.color = ["#ff6b6b","#feca57","#54a0ff","#5f27cd","#1dd1a1","#fff176"][Math.floor(Math.random()*6)];
+  }
+  update() {
+    const vx = Math.cos(this.angle) * this.speed;
+    const vy = Math.sin(this.angle) * this.speed;
+    // push the current position to trail
+    this.trail.push({ x: this.x, y: this.y });
+    if (this.trail.length > 12) this.trail.shift();
+    this.x += vx; this.y += vy;
+    const distance = Math.hypot(this.targetX - this.x, this.targetY - this.y);
+    // emit tiny particles along flight path for launching sparkle
+    if (Math.random() < 0.6) {
+      const tiny = new Particle(this.x, this.y, this.color, { x: (Math.random()-0.5)*1.5, y: (Math.random()-0.5)*1.5 }, Math.random()*1.5+0.3, 18);
+      tiny.life = 20 + Math.random()*20;
+      particles.push(tiny);
+    }
+    if (distance < 12) this.reached = true;
+  }
+  draw(ctx) {
+    // drawing with glow: a thicker faint trail first, then sharp core
+    if (this.trail.length > 0) {
+      ctx.save();
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = this.color;
+      ctx.globalAlpha = 0.08;
+      ctx.beginPath();
+      ctx.moveTo(this.trail[0].x, this.trail[0].y);
+      for (let p of this.trail) ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+
+      ctx.lineWidth = 4;
+      ctx.globalAlpha = 0.18;
+      ctx.beginPath();
+      ctx.moveTo(this.trail[0].x, this.trail[0].y);
+      for (let p of this.trail) ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // core rocket point
+    ctx.save();
+    ctx.beginPath();
+    ctx.fillStyle = "#fff";
+    ctx.globalAlpha = 1;
+    ctx.arc(this.x, this.y, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+let fireworks = [];
+let particles = [];
+let rings = [];
+let autoFireworkInterval;
+let firstBlastDone = false;
+
+// Load sky image
+const skyImg = new Image();
+skyImg.src = 'https://images.pexels.com/photos/18401306/pexels-photo-18401306.jpeg';
+
+function createExplosion(x, y) {
+  const colors = ["#ff6b6b", "#feca57", "#54a0ff", "#5f27cd", "#1dd1a1", "#fff176"];
+  const mainColor = colors[Math.floor(Math.random() * colors.length)];
+  const count = 70 + Math.random() * 40;
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 * i) / count;
+    const speed = Math.random() * 6 + 2;
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed;
+    // add randomness and some upward bias for a nice bloom
+    const velocity = { x: vx * (0.9 + Math.random()*0.6), y: vy * (0.9 + Math.random()*0.6) - Math.random()*1.2 };
+    particles.push(new Particle(
+      x, y,
+      colors[Math.floor(Math.random() * colors.length)],
+      velocity,
+      Math.random() * 2.5 + 0.6,
+      120 + Math.random() * 30
+    ));
+  }
+
+  // add an expanding ring for bloom
+  rings.push(new Ring(x, y, mainColor));
+
+  explodeSound.currentTime = 0;
+  explodeSound.play();
+
+  if (!firstBlastDone) {
+  firstBlastDone = true;
+  setTimeout(() => {
+    messageBox.classList.add("show");
+  }, 500);
+}
+
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw sky image as background (draw normally)
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.drawImage(skyImg, 0, 0, canvas.width, canvas.height);
+
+  // Use additive blending for fireworks & particles to create glow/blush
+  ctx.globalCompositeOperation = 'lighter';
+
+  // Draw fireworks (rockets)
+  for (let i = fireworks.length - 1; i >= 0; i--) {
+    const f = fireworks[i];
+    f.update();
+    f.draw(ctx);
+    if (f.reached) {
+      createExplosion(f.x, f.y);
+      fireworks.splice(i, 1);
+    }
+  }
+
+  /* Draw rings (explosion bloom rings)
+  for (let i = rings.length - 1; i >= 0; i--) {
+    const r = rings[i];
+    r.update();
+    r.draw(ctx);
+    if (r.alpha <= 0) rings.splice(i, 1);
+  }*/
+
+  // Draw particles (sparkles)
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.update();
+    p.draw(ctx);
+    if (p.life <= 0 || p.alpha <= 0.01) particles.splice(i, 1);
+  }
+
+  // reset composite for any non-additive drawing
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+function startAutoFireworks() {
+  if (autoFireworkInterval) return;
+  autoFireworkInterval = setInterval(() => {
+    const startX = Math.random() * canvas.width;
+    const startY = canvas.height;
+    const targetX = Math.random() * canvas.width;
+    const targetY = Math.random() * (canvas.height / 2);
+    fireworks.push(new Firework(startX, startY, targetX, targetY));
+    launchSound.currentTime = 0;
+    launchSound.play();
+  }, 1200);
+}
+
+skyImg.onload = () => {
+  animate();
+};
+
+// Lamp toggle logic for 2 lamps side by side
+// Lamp toggle logic for 2 lamps side by side
+const lamps = [
+  document.getElementById('deepaLamp1'),
+  document.getElementById('deepaLamp2')
+];
+
+let areLampsLit = false;
+
+lamps.forEach(lamp => {
+  lamp.addEventListener('click', () => {
+    areLampsLit = !areLampsLit;
+
+    lamps.forEach(l => l.classList.toggle('lit', areLampsLit));
+
+	if (areLampsLit) {
+	  firstBlastDone = false;
+	  messageBox.classList.remove("show"); // keep hidden initially
+	  startAutoFireworks();
+	  launchSound.play();
+	} else {
+	  messageBox.classList.remove("show");
+	  firstBlastDone = false;
+	  clearInterval(autoFireworkInterval);
+	  autoFireworkInterval = null;
+	}
+
+  });
+});
+
+
+// Auto light lamps after 10 seconds if not clicked
+setTimeout(() => {
+  lamps.forEach(lamp => {
+    if (!lamp.classList.contains('lit')) {
+      lamp.classList.add('lit');
+    }
+  });
+  firstBlastDone = false;
+  startAutoFireworks();
+  launchSound.play();
+}, 10000);
+
+</script>
+
+</body>
+</html>
+

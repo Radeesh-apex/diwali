@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Night Ayodhya Lit Up · Happy Diwali</title>
+  <meta name="description"
+    content="A Diwali greeting: Rama, Sita and Lakshmana return to Ayodhya on a moonless night, and the city welcomes them with an ocean of lamps.">
+  <meta name="theme-color" content="#020205">
+  <meta property="og:title" content="The Night Ayodhya Lit Up · Happy Diwali">
+  <meta property="og:description" content="Rama's homecoming, told in ten thousand lamps. Shubh Deepavali!">
+  <meta property="og:type" content="website">
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 6c6 9 9 15 9 21a9 9 0 0 1-18 0c0-6 3-12 9-21z' fill='%23ffb547'/%3E%3Cpath d='M6 38h52c-3 12-13 19-26 19S9 50 6 38z' fill='%23b4502a'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+Devanagari:wght@500;600&family=Noto+Serif+Tamil:wght@500;600&family=Noto+Serif+Telugu:wght@500;600&family=Noto+Serif+Bengali:wght@500;600&family=Noto+Serif+Gujarati:wght@500;600&family=Noto+Serif+Kannada:wght@500;600&family=Noto+Serif+Malayalam:wght@500;600&family=Noto+Serif+Gurmukhi:wght@500;600&family=Noto+Serif+Oriya:wght@500;600&family=Noto+Nastaliq+Urdu:wght@500;600&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+  <canvas id="stage" role="img"
+    aria-label="Animated scene: Rama, Sita and Lakshmana walk toward the gates of Ayodhya on a moonless night while citizens light thousands of clay lamps and fireworks fill the sky."></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- Story captions -->
+  <div id="caption" class="caption" aria-live="polite"></div>
+
+  <!-- Multilingual greeting stage -->
+  <div id="greet" class="greet" aria-live="polite"></div>
+
+  <!-- Finale -->
+  <section id="finale" class="finale" hidden>
+    <p class="f-deva" lang="hi">शुभ दीपावली</p>
+    <h1 class="f-title" id="finaleTitle" aria-label="Happy Diwali">Happy Diwali</h1>
+    <p class="f-sub">May the light that welcomed Rama home fill yours with joy, peace and prosperity.</p>
+    <p class="f-from" id="fromLine" hidden>with warm wishes from <span id="fromName"></span></p>
+    <div class="ribbon" aria-hidden="true">
+      <div class="ribbon-track" id="ribbon"></div>
+    </div>
+  </section>
+
+  <div id="actions" class="actions" hidden>
+    <p class="hint">Tap the sky to light a firework</p>
+    <div class="action-row">
+      <button type="button" class="btn" id="replayBtn">↺ Watch again</button>
+      <button type="button" class="btn" id="nameBtn">✎ Add your name</button>
+      <button type="button" class="btn btn-gold" id="shareBtn">Share the light</button>
+    </div>
+    <form id="nameForm" class="name-form" hidden>
+      <label class="sr-only" for="nameInput">Your name</label>
+      <input id="nameInput" maxlength="40" autocomplete="name" placeholder="Your name">
+      <button type="submit" class="btn btn-gold">Save</button>
+    </form>
+  </div>
+
+  <!-- HUD -->
+  <div class="hud" id="hud" hidden>
+    <button type="button" class="hud-btn" id="soundBtn" aria-label="Mute sound" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path class="spk" d="M4 9h4l5-4v14l-5-4H4z" />
+        <path class="wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" />
+        <path class="mute" d="M16 9l6 6M22 9l-6 6" />
+      </svg>
+    </button>
+    <button type="button" class="hud-btn hud-skip" id="skipBtn">Skip to greeting ›</button>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <!-- Intro -->
+  <div id="intro" class="intro">
+    <div class="intro-inner">
+      <p class="eyebrow">Deepavali · 2026</p>
+      <h1 class="intro-title">The Night Ayodhya<br><em>Lit Up</em></h1>
+      <p class="lede">Rama’s homecoming, told in ten thousand lamps.</p>
+      <button type="button" id="beginBtn" class="begin">
+        <svg class="intro-diya" viewBox="0 0 120 90" aria-hidden="true">
+          <defs>
+            <radialGradient id="fl" cx="50%" cy="70%" r="60%">
+              <stop offset="0" stop-color="#fffbe6" />
+              <stop offset=".35" stop-color="#ffd36b" />
+              <stop offset=".8" stop-color="#ff8a1f" />
+              <stop offset="1" stop-color="#ff6a00" stop-opacity="0" />
+            </radialGradient>
+            <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stop-color="#ffb347" stop-opacity=".55" />
+              <stop offset="1" stop-color="#ffb347" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="clay" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#c0602e" />
+              <stop offset="1" stop-color="#5a220e" />
+            </linearGradient>
+          </defs>
+          <circle class="halo" cx="60" cy="34" r="34" fill="url(#halo)" />
+          <path class="flame" d="M60 8c7 10 10 17 10 23a10 10 0 0 1-20 0c0-6 3-13 10-23z" fill="url(#fl)" />
+          <path d="M14 50h78l16-8c-4 6-9 9-14 11-6 16-20 25-34 25S32 69 26 54c-5-1-9-2-12-4z" fill="url(#clay)" />
+          <ellipse cx="56" cy="50" rx="40" ry="5" fill="#2a0e05" />
+          <g fill="#ffd9a0" opacity=".85">
+            <circle cx="36" cy="62" r="1.8" />
+            <circle cx="48" cy="67" r="1.8" />
+            <circle cx="60" cy="69" r="1.8" />
+            <circle cx="72" cy="67" r="1.8" />
+            <circle cx="84" cy="62" r="1.8" />
+          </g>
+        </svg>
+        <span>Light the first lamp</span>
+      </button>
+      <p class="note">Best with sound · about 80 seconds</p>
+    </div>
+  </div>
+
+  <noscript>
+    <p class="noscript">शुभ दीपावली · Happy Diwali. Please enable JavaScript to see the animation.</p>
+  </noscript>
+  <script src="assets/js/main.js"></script>
+</body>
+
+</html>
