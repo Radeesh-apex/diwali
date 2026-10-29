@@ -1,4 +1,8 @@
-
+/*!
+ * The Night Ayodhya Lit Up — Diwali 2026
+ * Rama, Sita and Lakshmana return to Ayodhya on Kartika Amavasya; the city answers with lamps.
+ * Pure canvas + DOM, no build step. Works on GitHub Pages as static files.
+ */
 (() => {
   'use strict';
 
@@ -6,18 +10,30 @@
      Content
      ===================================================================== */
   const GREETINGS = [
-    { lang: 'Hindi', code: 'hi', font: 'deva', native: 'दीपावली की हार्दिक शुभकामनाएँ', roman: 'Deepavali ki hardik shubhkamnayein' },
-    { lang: 'English', code: 'en', font: 'latn', native: 'Happy Diwali', roman: 'May every lamp you light bring you home' },
-    { lang: 'Tamil', code: 'ta', font: 'taml', native: 'இனிய தீபாவளி நல்வாழ்த்துகள்', roman: 'Iniya Deepavali nalvazhthukal' },
-    { lang: 'Telugu', code: 'te', font: 'telu', native: 'దీపావళి శుభాకాంక్షలు', roman: 'Deepavali shubhakankshalu' },
-    { lang: 'Bengali', code: 'bn', font: 'beng', native: 'শুভ দীপাবলি', roman: 'Shubho Dipaboli' },
-    { lang: 'Gujarati', code: 'gu', font: 'gujr', native: 'દિવાળીની હાર્દિક શુભકામનાઓ', roman: 'Diwali ni hardik shubhkamnao' },
-    { lang: 'Marathi', code: 'mr', font: 'deva', native: 'दिवाळीच्या हार्दिक शुभेच्छा', roman: 'Diwalichya hardik shubhechha' },
     { lang: 'Kannada', code: 'kn', font: 'knda', native: 'ದೀಪಾವಳಿ ಹಬ್ಬದ ಶುಭಾಶಯಗಳು', roman: 'Deepavali habbada shubhashayagalu' },
-    { lang: 'Malayalam', code: 'ml', font: 'mlym', native: 'ദീപാവലി ആശംസകൾ', roman: 'Deepavali ashamsakal' },
-    { lang: 'Punjabi', code: 'pa', font: 'guru', native: 'ਦੀਵਾਲੀ ਦੀਆਂ ਲੱਖ ਲੱਖ ਵਧਾਈਆਂ', roman: 'Diwali diyan lakh lakh vadhaiyan' },
-    { lang: 'Odia', code: 'or', font: 'orya', native: 'ଦୀପାବଳିର ଶୁଭେଚ୍ଛା', roman: 'Deepabalira shubhechha' },
-    { lang: 'Urdu', code: 'ur', font: 'arab', native: 'دیوالی مبارک', roman: 'Diwali Mubarak', rtl: true },
+    { lang: 'Assamese', code: 'as', font: 'beng', native: 'দীপাৱলীৰ শুভেচ্ছা', roman: 'Deepawalir shubhechha' },
+    { lang: 'Bengali', code: 'bn', font: 'beng', native: 'শুভ দীপাবলি', roman: 'Shubho Dipaboli' },
+    { lang: 'Bodo', code: 'brx', font: 'deva', native: 'हामब्लायथि दिवालि', roman: 'Hamblaythiy Diwali' },
+    { lang: 'Dogri', code: 'doi', font: 'deva', native: 'देआली दियां शुभकामनां', roman: 'Deali diyan shubhkamnaṁ' },
+    { lang: 'English', code: 'en', font: 'latn', native: 'Happy Deepawali', roman: 'Happy Deepawali' },
+    { lang: 'Gujarati', code: 'gu', font: 'gujr', native: 'હેપ્પી દિવાળી', roman: 'Happy Diwali' },
+    { lang: 'Hindi', code: 'hi', font: 'deva', native: 'शुभ दीपावली', roman: 'Shubh Deepawali' },
+    { lang: 'Kannada', code: 'kn', font: 'knda', native: 'ದೀಪಾವಳಿ ಹಬ್ಬದ ಶುಭಾಶಯಗಳು', roman: 'Deepavali habbada shubhashayagalu' },
+    { lang: 'Kashmiri', code: 'ks', font: 'arab', native: 'دیوالی مبارک', roman: 'Diwali Mubarak', rtl: true },
+    { lang: 'Konkani', code: 'kok', font: 'deva', native: 'दिवाळेचीं परबीं', roman: 'Diwalechin parbin' },
+    { lang: 'Maithili', code: 'mai', font: 'deva', native: 'शुभ दीपावली', roman: 'Shubh Deepawali' },
+    { lang: 'Malayalam', code: 'ml', font: 'mlym', native: 'സന്തോഷകരമായ ദീപാവലി', roman: 'Santhoshakaramaya Deepavali' },
+    { lang: 'Manipuri', code: 'mni', font: 'beng', native: 'দীপাবলীগী য়াাইফ-পাউজেল', roman: 'Dipabaligi yaif-paujel' }, // Note: Also uses Meitei Mayek script if preferred
+    { lang: 'Marathi', code: 'mr', font: 'deva', native: 'दीपावलीच्या हार्दिक शुभेच्छा', roman: 'Deepavalichya hardik shubhechha' },
+    { lang: 'Nepali', code: 'ne', font: 'deva', native: 'शुभ दीपावली', roman: 'Shubh Deepawali' },
+    { lang: 'Odia', code: 'or', font: 'orya', native: 'ଶୁଭ ଦୀପାବଳି', roman: 'Shubha Deepabali' },
+    { lang: 'Punjabi', code: 'pa', font: 'guru', native: 'ਸ਼ੁਭ ਦੀਪਾਵਲੀ', roman: 'Shubh Deepawali' },
+    { lang: 'Sanskrit', code: 'sa', font: 'deva', native: 'सुखदं दीपावल्याः', roman: 'Sukhadam Deepawalyah' },
+    { lang: 'Santali', code: 'sat', font: 'olck', native: 'ᱨᱟᱹᱥᱠᱟᱹ ᱫᱤᱯᱟᱣᱟᱞᱤ', roman: 'Raska Dipawali' },
+    { lang: 'Sindhi', code: 'sd', font: 'arab', native: 'خوشيءَ ڀريو ديپاولی', roman: 'Khushiya bharyo Deepawali', rtl: true },
+    { lang: 'Tamil', code: 'ta', font: 'taml', native: 'தீபாவளி வாழ்த்துகள்', roman: 'Deepavali vaazhthukal' },
+    { lang: 'Telugu', code: 'te', font: 'telu', native: 'దీపావళి శుభాకాంక్షలు', roman: 'Deepavali shubhakankshalu' },
+    { lang: 'Urdu', code: 'ur', font: 'arab', native: 'ہیپی دیوالی', roman: 'Happy Diwali', rtl: true }
   ];
 
   const T = {
@@ -117,7 +133,7 @@
     const portrait = H / W > 1.15;
     u = portrait ? Math.min(W / 540, H / 900) : Math.min(W / 720, H / 820);
     cx = W / 2;
-    baseY = Math.round(H * (portrait ? 0.6 : 0.6));
+    baseY = Math.round(H * (portrait ? 0.6 : H / W < 0.58 ? 0.66 : 0.6)); // short laptop screens: more sky for the words
     wallH = 70 * u; wallTop = baseY - wallH;
     terraceBot = baseY + 22 * u;
     stepH = 8 * u;
@@ -1391,8 +1407,10 @@
     if (started && t >= T.fireworks) {
       if (t >= nextLaunch) {
         const k = t > T.finale ? 1.7 : t > T.greet ? 1.25 : 0.9;
-        launch(W * (0.08 + Math.random() * 0.84), H * 0.06 + Math.random() * (baseY - 240 * u - H * 0.06));
-        if (Math.random() < 0.22 * k) launch(W * (0.08 + Math.random() * 0.84), H * 0.08 + Math.random() * (baseY - 260 * u - H * 0.08), true);
+        // while words are on screen, keep bursts to the sides so the greeting stays readable
+        const fx = () => (t >= T.greet - 1 ? (Math.random() < 0.5 ? 0.04 + Math.random() * 0.2 : 0.76 + Math.random() * 0.2) : 0.08 + Math.random() * 0.84) * W;
+        launch(fx(), H * 0.06 + Math.random() * (baseY - 240 * u - H * 0.06));
+        if (Math.random() < 0.22 * k) launch(fx(), H * 0.08 + Math.random() * (baseY - 260 * u - H * 0.08), true);
         nextLaunch = t + ((reduceMotion ? 1.6 : 0.45) + Math.random() * 0.9) / k;
       }
     }
@@ -2073,7 +2091,7 @@
 
   function buildFinale() {
     const title = $('#finaleTitle');
-    const txt = 'Happy Diwali';
+    const txt = 'Happy Deepavali';
     title.textContent = '';
     title.setAttribute('data-text', txt);
     [...txt].forEach((ch, i) => {
@@ -2106,6 +2124,7 @@
   function updateHud(t) {
     skipBtn.classList.toggle('gone', t > T.greet - 2);
     document.body.classList.toggle('can-fire', started && t > T.fireworks);
+    document.body.classList.toggle('reading', started && t >= T.greet - 0.6);
   }
 
   function resetTransient() {
@@ -2202,16 +2221,6 @@
     return url.toString();
   }
 
-  $('#shareBtn').addEventListener('click', async () => {
-    const url = shareUrl();
-    const data = { title: 'Happy Diwali · The Night Ayodhya Lit Up', text: 'शुभ दीपावली! A little Diwali story for you 🪔', url };
-    try {
-      if (navigator.share) { await navigator.share(data); return; }
-    } catch (e) { if (e && e.name === 'AbortError') return; }
-    try { await navigator.clipboard.writeText(url); toast('Link copied — share the light'); }
-    catch (e) { toast(url); }
-  });
-
   const nameForm = $('#nameForm'), nameInput = $('#nameInput');
   $('#nameBtn').addEventListener('click', () => {
     nameForm.hidden = !nameForm.hidden;
@@ -2235,7 +2244,7 @@
     if (!document.fonts || !document.fonts.load) return;
     const fams = { deva: 'Noto Serif Devanagari', taml: 'Noto Serif Tamil', telu: 'Noto Serif Telugu', beng: 'Noto Serif Bengali', gujr: 'Noto Serif Gujarati', knda: 'Noto Serif Kannada', mlym: 'Noto Serif Malayalam', guru: 'Noto Serif Gurmukhi', orya: 'Noto Serif Oriya', arab: 'Noto Nastaliq Urdu', latn: 'Cormorant Garamond' };
     GREETINGS.forEach((g) => { document.fonts.load(`600 40px "${fams[g.font]}"`, g.native).catch(() => { }); });
-    document.fonts.load('italic 500 40px "Cormorant Garamond"', 'Happy Diwali').catch(() => { });
+    document.fonts.load('italic 500 40px "Cormorant Garamond"', 'Happy Deepavali').catch(() => { });
   }
 
   let resizeTimer;
